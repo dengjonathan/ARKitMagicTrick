@@ -13,7 +13,6 @@
 		1F494C891F8E7BC600C90ADC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F494C871F8E7BC600C90ADC /* Main.storyboard */; };
 		1F494C8B1F8E7BC600C90ADC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F494C8A1F8E7BC600C90ADC /* Assets.xcassets */; };
 		1F494C8E1F8E7BC600C90ADC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F494C8C1F8E7BC600C90ADC /* LaunchScreen.storyboard */; };
-		1F494C961F8E7C5800C90ADC /* SceneKit Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 1F494C951F8E7C5800C90ADC /* SceneKit Scene.scn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +24,6 @@
 		1F494C8A1F8E7BC600C90ADC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1F494C8D1F8E7BC600C90ADC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1F494C8F1F8E7BC600C90ADC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1F494C951F8E7C5800C90ADC /* SceneKit Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = "SceneKit Scene.scn"; path = "Magic Trick/art.scnassets/SceneKit Scene.scn"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +40,6 @@
 		1F494C751F8E7BC600C90ADC = {
 			isa = PBXGroup;
 			children = (
-				1F494C951F8E7C5800C90ADC /* SceneKit Scene.scn */,
 				1F494C801F8E7BC600C90ADC /* Magic Trick */,
 				1F494C7F1F8E7BC600C90ADC /* Products */,
 			);
@@ -130,7 +127,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F494C841F8E7BC600C90ADC /* art.scnassets in Resources */,
-				1F494C961F8E7C5800C90ADC /* SceneKit Scene.scn in Resources */,
 				1F494C8E1F8E7BC600C90ADC /* LaunchScreen.storyboard in Resources */,
 				1F494C8B1F8E7BC600C90ADC /* Assets.xcassets in Resources */,
 				1F494C891F8E7BC600C90ADC /* Main.storyboard in Resources */,
@@ -286,7 +282,7 @@
 				DEVELOPMENT_TEAM = L3G9FY2DZF;
 				INFOPLIST_FILE = "Magic Trick/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "edu.JonathanDeng.Magic-Trick";
+				PRODUCT_BUNDLE_IDENTIFIER = udacity.ARParticle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -301,7 +297,7 @@
 				DEVELOPMENT_TEAM = L3G9FY2DZF;
 				INFOPLIST_FILE = "Magic Trick/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "edu.JonathanDeng.Magic-Trick";
+				PRODUCT_BUNDLE_IDENTIFIER = udacity.ARParticle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

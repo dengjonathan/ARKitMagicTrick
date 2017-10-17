@@ -13,6 +13,7 @@ import ARKit
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
+    private var placedHat: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,9 +36,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = .horizontal
 
         // Run the view's session
         sceneView.session.run(configuration)
+        print("starting up")
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -51,7 +54,26 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.didReceiveMemoryWarning()
         // Release any cached data, images, etc that aren't in use.
     }
+    
+    @IBAction func didTap(_ sender: UITapGestureRecognizer) {
+        print("did tap")
+        let tapLocation = sender.location(in: sceneView)
+        let results = sceneView.hitTest(tapLocation, types: .existingPlane)
+        if let result = results.first {
+            if !placedHat {
+                placeHat(result)
+            } else {
+                throwBall(result)
+            }
+        }
+    }
 
+    private func placeHat(_ result: ARHitTestResult ) {
+        
+    }
+    private func throwBall(_ result: ARHitTestResult) {
+        print("throwing ball")
+    }
     // MARK: - ARSCNViewDelegate
     
 /*
