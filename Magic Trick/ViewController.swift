@@ -13,7 +13,6 @@ import ARKit
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
-    private var placedHat: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,21 +56,24 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBAction func didTap(_ sender: UITapGestureRecognizer) {
         print("did tap")
-        let tapLocation = sender.location(in: sceneView)
-        let results = sceneView.hitTest(tapLocation, types: .existingPlane)
-        if let result = results.first {
-            if !placedHat {
-                placeHat(result)
-            } else {
-                throwBall(result)
-            }
-        }
+//        let tapLocation = sender.location(in: sceneView)
+//        let results = sceneView.hitTest(tapLocation, types: .existingPlane)
+//        if let result = results.first {
+        placeBall()
     }
 
-    private func placeHat(_ result: ARHitTestResult ) {
+    private func placeBall() {
+        print("placing ball")
+        let cameraTransform = sceneView.session.currentFrame?.camera.transform
+        let ball = SCNSphere(radius: 0.2)
+        let ballNode = SCNNode(geometry: ball)
+        if let transform = cameraTransform {
+            ballNode.simdTransform = transform
+            throwBall(ballNode)
+        }
         
     }
-    private func throwBall(_ result: ARHitTestResult) {
+    private func throwBall(_ ball: SCNNode) {
         print("throwing ball")
     }
     // MARK: - ARSCNViewDelegate
