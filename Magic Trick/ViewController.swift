@@ -24,7 +24,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.showsStatistics = true
         
         // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/magicHat.scn")!
+        let scene = SCNScene()
         
         // Set the scene to the view
         sceneView.scene = scene
@@ -107,22 +107,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         // Create an SNCPlane on the ARPlane
         print("adding new plane to anchor")
-        guard let planeAnchor = anchor as? ARPlaneAnchor else {
+        guard let _ = anchor as? ARPlaneAnchor else {
             return
         }
-        
-        let plane = SCNPlane(width: CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z))
-        
-        let planeMaterial = SCNMaterial()
-        planeMaterial.diffuse.contents = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.3)
-        plane.materials = [planeMaterial]
-        
-        let planeNode = SCNNode(geometry: plane)
-        planeNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
-        
-        planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2, 1, 0, 0)
-        
-        node.addChildNode(planeNode)
+//
+//        let plane = SCNPlane(width: CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z))
+//
+//        let planeMaterial = SCNMaterial()
+//        planeMaterial.diffuse.contents = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.3)
+//        plane.materials = [planeMaterial]
+//
+//        let planeNode = SCNNode(geometry: plane)
+//        planeNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+//
+//        planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2, 1, 0, 0)
+    
+        let magicScene = SCNScene(named: "art.scnassets/magicHat.scn")
+        let magicHat = magicScene?.rootNode.childNode(withName: "hat", recursively: false)
+        // when a new plane node is added we add the magicHat node to it
+        if let magicHatNode = magicHat {
+            print("adding magic hat as node")
+            node.addChildNode(magicHatNode)
+        }
     }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
