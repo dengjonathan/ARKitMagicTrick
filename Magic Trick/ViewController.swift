@@ -59,22 +59,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 //        let tapLocation = sender.location(in: sceneView)
 //        let results = sceneView.hitTest(tapLocation, types: .existingPlane)
 //        if let result = results.first {
-        placeBall()
+        let ballNode = placeBall()
+        if let ball = ballNode {
+            throwBall(ball)
+        }
     }
 
-    private func placeBall() {
+    private func placeBall() -> SCNNode? {
         print("placing ball")
         let cameraTransform = sceneView.session.currentFrame?.camera.transform
-        let ball = SCNSphere(radius: 0.2)
+        let ball = SCNSphere(radius: 0.1)
         let ballNode = SCNNode(geometry: ball)
         if let transform = cameraTransform {
             ballNode.simdTransform = transform
-            throwBall(ballNode)
+            sceneView.scene.rootNode.addChildNode(ballNode)
+            return ballNode
         }
-        
+        return nil
     }
+
     private func throwBall(_ ball: SCNNode) {
         print("throwing ball")
+        let forwardForce = SCNVector3Make(0, 0, 6)
+        ball.physicsBody?.applyForce(forwardForce, asImpulse: true)
     }
     // MARK: - ARSCNViewDelegate
     
