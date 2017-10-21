@@ -68,8 +68,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     private func placeBall() -> SCNNode? {
         print("placing ball")
         let cameraTransform = sceneView.session.currentFrame?.camera.transform
-        let ball = SCNSphere(radius: 0.1)
+        let ball = SCNSphere(radius: 0.25)
         let ballNode = SCNNode(geometry: ball)
+        let physicsShape = SCNPhysicsShape(geometry: SCNSphere())
+        ballNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: physicsShape)
         if let transform = cameraTransform {
             ballNode.simdTransform = transform
             sceneView.scene.rootNode.addChildNode(ballNode)
@@ -80,7 +82,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     private func throwBall(_ ball: SCNNode) {
         print("throwing ball")
-        let forwardForce = SCNVector3Make(0, 0, 6)
+        let forwardForce = SCNVector3Make(0, 3, 8)
         ball.physicsBody?.applyForce(forwardForce, asImpulse: true)
     }
     // MARK: - ARSCNViewDelegate
