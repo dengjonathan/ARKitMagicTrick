@@ -65,6 +65,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
 
+    @IBAction func didLongPress(_ sender: UILongPressGestureRecognizer) {
+        print("long press")
+        // set a timer when the state is gesture began and then get the them time when state ended
+    }
+    
     private func placeBall() -> SCNNode? {
         print("placing ball")
         let cameraTransform = sceneView.session.currentFrame?.camera.transform
@@ -85,16 +90,40 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let forwardForce = SCNVector3Make(0, 3, 8)
         ball.physicsBody?.applyForce(forwardForce, asImpulse: true)
     }
+
     // MARK: - ARSCNViewDelegate
+    private var planeNode: SCNNode?
     
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
+        // Create an SCNNode for a detect ARPlaneAnchor
+        print("detecting anchor")
+        guard let _ = anchor as? ARPlaneAnchor else {
+            return nil
+        }
+        planeNode = SCNNode()
+        return planeNode
     }
-*/
+    
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        // Create an SNCPlane on the ARPlane
+        print("adding new plane to anchor")
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {
+            return
+        }
+        
+        let plane = SCNPlane(width: CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z))
+        
+        let planeMaterial = SCNMaterial()
+        planeMaterial.diffuse.contents = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.3)
+        plane.materials = [planeMaterial]
+        
+        let planeNode = SCNNode(geometry: plane)
+        planeNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+        
+        planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2, 1, 0, 0)
+        
+        node.addChildNode(planeNode)
+    }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
