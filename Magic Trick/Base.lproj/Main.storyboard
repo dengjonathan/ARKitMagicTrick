@@ -30,6 +30,11 @@
                         <action selector="didTap:" destination="BV1-FR-VrT" id="IzC-Vm-qnz"/>
                     </connections>
                 </tapGestureRecognizer>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="2O0-QS-AVJ">
+                    <connections>
+                        <action selector="didLongPress:" destination="BV1-FR-VrT" id="FDe-tZ-bIn"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
         </scene>
     </scenes>

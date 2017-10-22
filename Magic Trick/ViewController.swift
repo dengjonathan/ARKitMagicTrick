@@ -56,13 +56,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBAction func didTap(_ sender: UITapGestureRecognizer) {
         print("did tap")
-//        let tapLocation = sender.location(in: sceneView)
-//        let results = sceneView.hitTest(tapLocation, types: .existingPlane)
-//        if let result = results.first {
-        let ballNode = placeBall()
-        if let ball = ballNode {
-            throwBall(ball)
-        }
+        throwBall()
     }
 
     @IBAction func didLongPress(_ sender: UILongPressGestureRecognizer) {
@@ -70,29 +64,38 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // set a timer when the state is gesture began and then get the them time when state ended
     }
     
-    private func placeBall() -> SCNNode? {
+    private func createBallNode() -> SCNNode {
         print("placing ball")
-        let cameraTransform = sceneView.session.currentFrame?.camera.transform
         let ball = SCNSphere(radius: 0.25)
         let ballNode = SCNNode(geometry: ball)
         let physicsShape = SCNPhysicsShape(geometry: SCNSphere())
         ballNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: physicsShape)
-        if let transform = cameraTransform {
-            ballNode.simdTransform = transform
-            sceneView.scene.rootNode.addChildNode(ballNode)
-            return ballNode
-        }
-        return nil
+        return ballNode
     }
 
-    private func throwBall(_ ball: SCNNode) {
+    private func throwBall() {
         print("throwing ball")
-        let forwardForce = SCNVector3Make(0, 3, 8)
-        ball.physicsBody?.applyForce(forwardForce, asImpulse: true)
+        let ball = createBallNode()
+        let (direction, position) = getUserVector()
+        ball.position = position
+        ball.physicsBody?.applyForce(direction, asImpulse: true)
+        sceneView.scene.rootNode.addChildNode(ball)
+    }
+    
+    private func getUserVector() -> (SCNVector3, SCNVector3) { // (direction, position)
+        if let frame = self.sceneView.session.currentFrame {
+            let mat = SCNMatrix4(frame.camera.transform) // 4x4 transform matrix describing camera in world space
+            let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33) // orientation of camera in world space
+            let pos = SCNVector3(mat.m41, mat.m42, mat.m43) // location of camera in world space
+            
+            return (dir, pos)
+        }
+        return (SCNVector3(0, 0, -1), SCNVector3(0, 0, -0.2))
     }
 
     // MARK: - ARSCNViewDelegate
     private var planeNode: SCNNode?
+    private var isHatPlaced: Bool = false
     
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         // Create an SCNNode for a detect ARPlaneAnchor
@@ -107,27 +110,19 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         // Create an SNCPlane on the ARPlane
         print("adding new plane to anchor")
-        guard let _ = anchor as? ARPlaneAnchor else {
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
-//
-//        let plane = SCNPlane(width: CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z))
-//
-//        let planeMaterial = SCNMaterial()
-//        planeMaterial.diffuse.contents = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.3)
-//        plane.materials = [planeMaterial]
-//
-//        let planeNode = SCNNode(geometry: plane)
-//        planeNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
-//
-//        planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2, 1, 0, 0)
-    
-        let magicScene = SCNScene(named: "art.scnassets/magicHat.scn")
-        let magicHat = magicScene?.rootNode.childNode(withName: "hat", recursively: false)
-        // when a new plane node is added we add the magicHat node to it
-        if let magicHatNode = magicHat {
-            print("adding magic hat as node")
-            node.addChildNode(magicHatNode)
+        if !isHatPlaced {
+            let magicScene = SCNScene(named: "art.scnassets/magicHat.scn")
+            let magicHat = magicScene?.rootNode.childNode(withName: "hat", recursively: false)
+            // when a new plane node is added we add the magicHat node to it
+            if let magicHatNode = magicHat {
+                magicHatNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+                print("adding magic hat as node")
+                node.addChildNode(magicHatNode)
+                isHatPlaced = true
+            }
         }
     }
     
