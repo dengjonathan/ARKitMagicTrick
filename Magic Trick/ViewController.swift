@@ -12,7 +12,13 @@ import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
 
+    @IBOutlet weak var directonLabel: UILabel!
     @IBOutlet var sceneView: ARSCNView!
+    private var isHatPlaced: Bool = false {
+        didSet {
+            directonLabel.isHidden = true
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,7 +71,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     private func createBallNode() -> SCNNode {
-        print("placing ball")
         let ball = SCNSphere(radius: 0.25)
         let ballNode = SCNNode(geometry: ball)
         let physicsShape = SCNPhysicsShape(geometry: SCNSphere())
@@ -74,18 +79,33 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
 
     private func throwBall() {
-        print("throwing ball")
         let ball = createBallNode()
         let (direction, position) = getUserVector()
         ball.position = position
-        ball.physicsBody?.applyForce(direction, asImpulse: true)
-        sceneView.scene.rootNode.addChildNode(ball)
+//        let forceLocation = SCNVector3(direction.x + position.x + 3, direction.y + position.y + 2, direction.z + position.z)
+        let original = SCNVector3(x: 0, y: 2, z: -20)
+        let force = simd_make_float4(original.x, original.y, original.z, 0)
+        let currentFrame = self.sceneView.session.currentFrame
+        if let frame = currentFrame {
+            let currentTransform = frame.camera.transform
+            let rotatedForce = simd_mul(currentTransform, force)
+            let vectorForce = SCNVector3(x: rotatedForce.x, y: rotatedForce.y, z: rotatedForce.z)
+            ball.physicsBody?.applyForce(vectorForce, asImpulse: true)
+            sceneView.scene.rootNode.addChildNode(ball)
+        }
+    }
+    
+    func getDirection(for point: CGPoint, in view: SCNView) -> SCNVector3 {
+        let farPoint  = view.unprojectPoint(SCNVector3Make(Float(point.x), Float(point.y), 1))
+        let nearPoint = view.unprojectPoint(SCNVector3Make(Float(point.x), Float(point.y), 0))
+        
+        return SCNVector3Make(farPoint.x - nearPoint.x, farPoint.y - nearPoint.y, farPoint.z - nearPoint.z)
     }
     
     private func getUserVector() -> (SCNVector3, SCNVector3) { // (direction, position)
         if let frame = self.sceneView.session.currentFrame {
             let mat = SCNMatrix4(frame.camera.transform) // 4x4 transform matrix describing camera in world space
-            let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33) // orientation of camera in world space
+            let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32 + 2, -1 * mat.m33) // orientation of camera in world space
             let pos = SCNVector3(mat.m41, mat.m42, mat.m43) // location of camera in world space
             
             return (dir, pos)
@@ -95,11 +115,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     // MARK: - ARSCNViewDelegate
     private var planeNode: SCNNode?
-    private var isHatPlaced: Bool = false
     
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         // Create an SCNNode for a detect ARPlaneAnchor
-        print("detecting anchor")
         guard let _ = anchor as? ARPlaneAnchor else {
             return nil
         }
@@ -109,7 +127,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         // Create an SNCPlane on the ARPlane
-        print("adding new plane to anchor")
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
@@ -119,6 +136,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             // when a new plane node is added we add the magicHat node to it
             if let magicHatNode = magicHat {
                 magicHatNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+                print(magicHatNode.physicsBody!.type.rawValue)
                 print("adding magic hat as node")
                 node.addChildNode(magicHatNode)
                 isHatPlaced = true
