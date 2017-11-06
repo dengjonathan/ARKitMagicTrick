@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F0CF1FB1FA6550100E7633D /* magicHat2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 1F0CF1FA1FA6550100E7633D /* magicHat2.scn */; };
 		1F494C821F8E7BC600C90ADC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F494C811F8E7BC600C90ADC /* AppDelegate.swift */; };
 		1F494C841F8E7BC600C90ADC /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F494C831F8E7BC600C90ADC /* art.scnassets */; };
 		1F494C861F8E7BC600C90ADC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F494C851F8E7BC600C90ADC /* ViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1F0CF1FA1FA6550100E7633D /* magicHat2.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = magicHat2.scn; path = "Magic Trick/art.scnassets/magicHat2.scn"; sourceTree = "<group>"; };
 		1F494C7E1F8E7BC600C90ADC /* Magic Trick.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Magic Trick.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F494C811F8E7BC600C90ADC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1F494C831F8E7BC600C90ADC /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -40,6 +42,7 @@
 		1F494C751F8E7BC600C90ADC = {
 			isa = PBXGroup;
 			children = (
+				1F0CF1FA1FA6550100E7633D /* magicHat2.scn */,
 				1F494C801F8E7BC600C90ADC /* Magic Trick */,
 				1F494C7F1F8E7BC600C90ADC /* Products */,
 			);
@@ -127,6 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F494C841F8E7BC600C90ADC /* art.scnassets in Resources */,
+				1F0CF1FB1FA6550100E7633D /* magicHat2.scn in Resources */,
 				1F494C8E1F8E7BC600C90ADC /* LaunchScreen.storyboard in Resources */,
 				1F494C8B1F8E7BC600C90ADC /* Assets.xcassets in Resources */,
 				1F494C891F8E7BC600C90ADC /* Main.storyboard in Resources */,

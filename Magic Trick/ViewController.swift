@@ -16,7 +16,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet var sceneView: ARSCNView!
     private var isHatPlaced: Bool = false {
         didSet {
-            directonLabel.isHidden = true
+            DispatchQueue.main.async {
+                self.directonLabel.isHidden = true
+            }
         }
     }
     
@@ -45,7 +47,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
         // Run the view's session
         sceneView.session.run(configuration)
-        print("starting up")
+        sceneView.debugOptions = [.showPhysicsShapes, .showPhysicsFields]
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -61,7 +63,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     @IBAction func didTap(_ sender: UITapGestureRecognizer) {
-        print("did tap")
         throwBall()
     }
 
@@ -69,13 +70,30 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         print("long press")
         // set a timer when the state is gesture began and then get the them time when state ended
     }
-    
+
+    @IBAction func didTapMagic(_ sender: UIButton) {
+        print("tapped magic button")
+    }
+
     private func createBallNode() -> SCNNode {
-        let ball = SCNSphere(radius: 0.25)
+        let ball = SCNSphere(radius: 0.1)
         let ballNode = SCNNode(geometry: ball)
         let physicsShape = SCNPhysicsShape(geometry: SCNSphere())
         ballNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: physicsShape)
         return ballNode
+    }
+    
+//    private func getBallsInHat() -> Array<SCNNode> {
+//        
+//    }
+//    
+    private func destroyBalls(balls: Array<SCNNode>) {
+        
+    }
+
+    @IBAction func didTapButton(_ sender: UIButton) {
+        print("tapped button")
+        throwBall()
     }
 
     private func throwBall() {
@@ -83,7 +101,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let (direction, position) = getUserVector()
         ball.position = position
 //        let forceLocation = SCNVector3(direction.x + position.x + 3, direction.y + position.y + 2, direction.z + position.z)
-        let original = SCNVector3(x: 0, y: 2, z: -20)
+        let original = SCNVector3(x: 0, y: 1, z: -3)
         let force = simd_make_float4(original.x, original.y, original.z, 0)
         let currentFrame = self.sceneView.session.currentFrame
         if let frame = currentFrame {
@@ -136,7 +154,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             // when a new plane node is added we add the magicHat node to it
             if let magicHatNode = magicHat {
                 magicHatNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
-                print(magicHatNode.physicsBody!.type.rawValue)
                 print("adding magic hat as node")
                 node.addChildNode(magicHatNode)
                 isHatPlaced = true
