@@ -76,10 +76,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
 
     private func createBallNode() -> SCNNode {
-        let ball = SCNSphere(radius: 0.1)
+        let ball = SCNSphere(radius: 0.05)
         let ballNode = SCNNode(geometry: ball)
-        let physicsShape = SCNPhysicsShape(geometry: SCNSphere())
+        let physicsShape = SCNPhysicsShape(geometry: ball)
         ballNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: physicsShape)
+        ballNode.physicsBody?.damping = 0.5
         return ballNode
     }
     
