@@ -14,7 +14,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet weak var directonLabel: UILabel!
     @IBOutlet var sceneView: ARSCNView!
-    private var isHatPlaced: Bool = false {
+    private var hat: SCNNode? {
         didSet {
             DispatchQueue.main.async {
                 self.directonLabel.isHidden = true
@@ -73,6 +73,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBAction func didTapMagic(_ sender: UIButton) {
         print("tapped magic button")
+        let balls = getBallsInHat()
+        destroyBalls(balls)
     }
 
     private func createBallNode() -> SCNNode {
@@ -81,27 +83,37 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let physicsShape = SCNPhysicsShape(geometry: ball)
         ballNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: physicsShape)
         ballNode.physicsBody?.damping = 0.5
+        ballNode.name = "ball"
         return ballNode
     }
     
-//    private func getBallsInHat() -> Array<SCNNode> {
-//        
-//    }
-//    
-    private func destroyBalls(balls: Array<SCNNode>) {
+    private func doNodesIntersect(_ a: SCNNode, _ b: SCNNode) -> Bool {
+        // TODO: calculate intersections
+    }
+
+    private func getBallsInHat() -> Array<SCNNode> {
+        guard let hatNode = hat else {
+            return [] as Array<SCNNode>
+        }
+        let balls = sceneView.scene.rootNode.childNodes(passingTest: { (node: SCNNode, _unsafeValue) in node.name == "ball" })
+        print(balls)
+        return balls.filter({ball in doNodesIntersect(ball, hatNode)});
+    }
+
+    private func destroyBalls(_ balls: Array<SCNNode>) {
         
     }
 
     @IBAction func didTapButton(_ sender: UIButton) {
-        print("tapped button")
         throwBall()
     }
 
     private func throwBall() {
         let ball = createBallNode()
-        let (direction, position) = getUserVector()
+        // get camera position as the ball's position
+        let (_, position) = getUserVector()
         ball.position = position
-//        let forceLocation = SCNVector3(direction.x + position.x + 3, direction.y + position.y + 2, direction.z + position.z)
+        // this is an arbitrary force that we rotate based on direction of the camera
         let original = SCNVector3(x: 0, y: 1, z: -3)
         let force = simd_make_float4(original.x, original.y, original.z, 0)
         let currentFrame = self.sceneView.session.currentFrame
@@ -113,14 +125,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             sceneView.scene.rootNode.addChildNode(ball)
         }
     }
-    
-    func getDirection(for point: CGPoint, in view: SCNView) -> SCNVector3 {
-        let farPoint  = view.unprojectPoint(SCNVector3Make(Float(point.x), Float(point.y), 1))
-        let nearPoint = view.unprojectPoint(SCNVector3Make(Float(point.x), Float(point.y), 0))
-        
-        return SCNVector3Make(farPoint.x - nearPoint.x, farPoint.y - nearPoint.y, farPoint.z - nearPoint.z)
-    }
-    
+
     private func getUserVector() -> (SCNVector3, SCNVector3) { // (direction, position)
         if let frame = self.sceneView.session.currentFrame {
             let mat = SCNMatrix4(frame.camera.transform) // 4x4 transform matrix describing camera in world space
@@ -149,15 +154,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
-        if !isHatPlaced {
+        if hat != nil {
             let magicScene = SCNScene(named: "art.scnassets/magicHat.scn")
             let magicHat = magicScene?.rootNode.childNode(withName: "hat", recursively: false)
             // when a new plane node is added we add the magicHat node to it
             if let magicHatNode = magicHat {
                 magicHatNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
-                print("adding magic hat as node")
                 node.addChildNode(magicHatNode)
-                isHatPlaced = true
+                hat = magicHatNode
             }
         }
     }
