@@ -87,8 +87,25 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return ballNode
     }
     
-    private func doNodesIntersect(_ a: SCNNode, _ b: SCNNode) -> Bool {
-        // TODO: calculate intersections
+    private func doesContain(inner: SCNNode, outer: SCNNode) -> Bool {
+        // get center point of inner node
+        let localPoint = inner.presentation.position
+        let (localMin, localMax) = outer.boundingBox
+        // convert the point to the hat's coordinate space
+        let rootNode = sceneView.scene.rootNode
+        let point = inner.convertPosition(localPoint, to: rootNode)
+        let min = outer.convertPosition(localMin, to: rootNode)
+        let max = outer.convertPosition(localMax, to: rootNode)
+        let error: Float = 0.2
+        print("point", point.x, point.y, point.z)
+        print(min.x, min.y, min.z)
+        print(max.x, max.y, max.z)
+        return  min.x - error <= point.x &&
+            min.y - error <= point.y &&
+            min.z - error <= point.z &&
+            max.x + error > point.x &&
+            max.y + error > point.y &&
+            max.z + error > point.z
     }
 
     private func getBallsInHat() -> Array<SCNNode> {
@@ -96,12 +113,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             return [] as Array<SCNNode>
         }
         let balls = sceneView.scene.rootNode.childNodes(passingTest: { (node: SCNNode, _unsafeValue) in node.name == "ball" })
-        print(balls)
-        return balls.filter({ball in doNodesIntersect(ball, hatNode)});
+        print(balls.count)
+        print(balls.filter({ball in doesContain(inner: ball, outer: hatNode)}).count)
+        return balls.filter({ball in doesContain(inner: ball, outer: hatNode)});
     }
 
     private func destroyBalls(_ balls: Array<SCNNode>) {
-        
+        balls.forEach({ ball in ball.removeFromParentNode() })
     }
 
     @IBAction func didTapButton(_ sender: UIButton) {
@@ -154,7 +172,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
-        if hat != nil {
+        print("detecting anchor")
+        if hat == nil {
             let magicScene = SCNScene(named: "art.scnassets/magicHat.scn")
             let magicHat = magicScene?.rootNode.childNode(withName: "hat", recursively: false)
             // when a new plane node is added we add the magicHat node to it
