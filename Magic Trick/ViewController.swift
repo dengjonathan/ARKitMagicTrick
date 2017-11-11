@@ -47,7 +47,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
         // Run the view's session
         sceneView.session.run(configuration)
-        sceneView.debugOptions = [.showPhysicsShapes, .showPhysicsFields]
+        // uncomment to show debug shapes
+        // sceneView.debugOptions = [.showPhysicsShapes, .showPhysicsFields]
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -168,27 +169,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         if hat == nil {
             let magicScene = SCNScene(named: "art.scnassets/magicHat.scn")
             let magicHat = magicScene?.rootNode.childNode(withName: "hat", recursively: false)
+            let floor = magicScene?.rootNode.childNode(withName: "floor", recursively: false)
             // when a new plane node is added we add the magicHat node to it
-            if let magicHatNode = magicHat {
+            if let magicHatNode = magicHat, let floorNode = floor {
                 magicHatNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+                floorNode.position = SCNVector3Make(planeAnchor.center.x, -0.25, planeAnchor.center.z)
                 node.addChildNode(magicHatNode)
+                node.addChildNode(floorNode)
                 hat = magicHatNode
             }
         }
-    }
-    
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-        
-    }
-    
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
     }
 }
