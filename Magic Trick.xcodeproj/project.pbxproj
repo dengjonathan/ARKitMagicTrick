@@ -26,6 +26,7 @@
 		1F494C8D1F8E7BC600C90ADC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1F494C8F1F8E7BC600C90ADC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1F4FE3601FB20FF8006F60C5 /* magicHat.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = magicHat.scn; path = "Magic Trick/art.scnassets/magicHat.scn"; sourceTree = "<group>"; };
+		1F8A6FF01FB7B70A00D163D3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +63,7 @@
 				1F494C811F8E7BC600C90ADC /* AppDelegate.swift */,
 				1F494C831F8E7BC600C90ADC /* art.scnassets */,
 				1F494C851F8E7BC600C90ADC /* ViewController.swift */,
+				1F8A6FF01FB7B70A00D163D3 /* README.md */,
 				1F494C871F8E7BC600C90ADC /* Main.storyboard */,
 				1F494C8A1F8E7BC600C90ADC /* Assets.xcassets */,
 				1F494C8C1F8E7BC600C90ADC /* LaunchScreen.storyboard */,

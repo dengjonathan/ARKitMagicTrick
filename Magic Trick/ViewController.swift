@@ -66,11 +66,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         throwBall()
     }
 
-    @IBAction func didLongPress(_ sender: UILongPressGestureRecognizer) {
-        print("long press")
-        // set a timer when the state is gesture began and then get the them time when state ended
-    }
-
     @IBAction func didTapMagic(_ sender: UIButton) {
         print("tapped magic button")
         let balls = getBallsInHat()
@@ -96,10 +91,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let point = inner.convertPosition(localPoint, to: rootNode)
         let min = outer.convertPosition(localMin, to: rootNode)
         let max = outer.convertPosition(localMax, to: rootNode)
+        // balls on the edge of the hat can sometimes get missed for some reason
         let error: Float = 0.2
-        print("point", point.x, point.y, point.z)
-        print(min.x, min.y, min.z)
-        print(max.x, max.y, max.z)
         return  min.x - error <= point.x &&
             min.y - error <= point.y &&
             min.z - error <= point.z &&
@@ -172,7 +165,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
-        print("detecting anchor")
         if hat == nil {
             let magicScene = SCNScene(named: "art.scnassets/magicHat.scn")
             let magicHat = magicScene?.rootNode.childNode(withName: "hat", recursively: false)
