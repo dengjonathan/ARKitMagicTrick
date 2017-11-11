@@ -69,7 +69,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBAction func didTapMagic(_ sender: UIButton) {
         print("tapped magic button")
         let balls = getBallsInHat()
-        destroyBalls(balls)
+        toggleHiddenPropertyOfBalls(balls)
     }
 
     private func createBallNode() -> SCNNode {
@@ -111,8 +111,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return balls.filter({ball in doesContain(inner: ball, outer: hatNode)});
     }
 
-    private func destroyBalls(_ balls: Array<SCNNode>) {
-        balls.forEach({ ball in ball.removeFromParentNode() })
+    private func toggleHiddenPropertyOfBalls(_ balls: Array<SCNNode>) {
+        balls.forEach({ ball in ball.isHidden = !ball.isHidden})
     }
 
     @IBAction func didTapButton(_ sender: UIButton) {
