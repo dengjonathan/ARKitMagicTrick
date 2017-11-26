@@ -126,13 +126,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let (_, position) = getUserVector()
         ball.position = position
         // this is an arbitrary force that we rotate based on direction of the camera
-        let original = SCNVector3(x: 0, y: 1, z: -3)
+        let original = SCNVector3(x: 0, y: 0, z: -3)
         let force = simd_make_float4(original.x, original.y, original.z, 0)
         let currentFrame = self.sceneView.session.currentFrame
         if let frame = currentFrame {
             let currentTransform = frame.camera.transform
             let rotatedForce = simd_mul(currentTransform, force)
-            let vectorForce = SCNVector3(x: rotatedForce.x, y: rotatedForce.y, z: rotatedForce.z)
+            var vectorForce = SCNVector3(x: rotatedForce.x, y: rotatedForce.y, z: rotatedForce.z)
+            vectorForce.y = 0.5
             ball.physicsBody?.applyForce(vectorForce, asImpulse: true)
             sceneView.scene.rootNode.addChildNode(ball)
         }
