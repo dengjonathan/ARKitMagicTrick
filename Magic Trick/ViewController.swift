@@ -79,6 +79,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let physicsShape = SCNPhysicsShape(geometry: ball)
         ballNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: physicsShape)
         ballNode.physicsBody?.damping = 0.5
+        ballNode.physicsBody?.mass = 2
+        ballNode.physicsBody?.friction = 0.3
         ballNode.name = "ball"
         return ballNode
     }
@@ -107,13 +109,30 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             return [] as Array<SCNNode>
         }
         let balls = sceneView.scene.rootNode.childNodes(passingTest: { (node: SCNNode, _unsafeValue) in node.name == "ball" })
-        print(balls.count)
-        print(balls.filter({ball in doesContain(inner: ball, outer: hatNode)}).count)
-        return balls.filter({ball in doesContain(inner: ball, outer: hatNode)});
+        return balls.filter({ ball in doesContain(inner: ball, outer: hatNode) });
+    }
+    
+    private func makeAllBallsInHatSameHiddenProperty(_ balls: Array<SCNNode>) {
+        let majorityOfBallsAreHidden = balls.filter({ $0.isHidden }).count > balls.count / 2
+        // all balls are changed to the hidden property of what ever the majority of the balls
+        // have so that the magic trick is consistent
+        balls.forEach({ ball in ball.isHidden = majorityOfBallsAreHidden })
     }
 
     private func toggleHiddenPropertyOfBalls(_ balls: Array<SCNNode>) {
-        balls.forEach({ ball in ball.isHidden = !ball.isHidden})
+        // NOTE: this code avoids a situation where there are some hidden balls in the
+        // hat and some non-hidden balls and they keep confusingly toggle back and forth
+        // when the magic trick button is pressed
+        let hiddenBallsCount = balls.filter({ $0.isHidden }).count
+        print(hiddenBallsCount)
+        print(balls.count)
+        let ballsAreAllSameHiddenProperty = hiddenBallsCount == balls.count ||
+            hiddenBallsCount == 0
+        if !ballsAreAllSameHiddenProperty {
+            makeAllBallsInHatSameHiddenProperty(balls)
+        } else {
+            balls.forEach({ ball in ball.isHidden = !ball.isHidden })
+        }
     }
 
     @IBAction func didTapButton(_ sender: UIButton) {
